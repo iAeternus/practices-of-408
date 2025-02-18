@@ -79,7 +79,9 @@
         "queue": "cpp",
         "version": "cpp",
         "ranges": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "bitset": "cpp",
+        "typeindex": "cpp"
     },
     "cSpell.words": [
         "DATAA"

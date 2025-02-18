@@ -4,6 +4,9 @@
 #define INIT_SIZE 100
 using value_t = int;
 
+/**
+ * @brief 顺序表
+ */
 struct Array {
     int length;
     int capacity;

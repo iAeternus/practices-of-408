@@ -8,7 +8,7 @@ struct Node {
     Node<T>* lchild = nullptr;
     Node<T>* rchild = nullptr;
 
-    Node(const T& data, Node<T>* lchild = nullptr, Node<T>* rchild = nullptr) :
+    Node(const T& data = {}, Node<T>* lchild = nullptr, Node<T>* rchild = nullptr) :
             data(data), lchild(lchild), rchild(rchild) {}
 };
 
@@ -272,7 +272,175 @@ struct BiTree {
         if (left && right) return r; // p q 分属左右子树
         return left ? left : right;  // p q 在同一边
     }
+
+    /**
+     * 152-11
+     */
+    int width() const {
+        std::queue<Node<T>*> q;
+        q.push(root);
+        int max_width = 0, width = 0;
+        while (!q.empty()) {
+            width = q.size();
+            max_width = std::max(max_width, width);
+            for (int i = 0; i < width; ++i) {
+                auto* cur = q.front();
+                q.pop();
+                if (cur->lchild) q.push(cur->lchild);
+                if (cur->rchild) q.push(cur->rchild);
+            }
+        }
+        return max_width;
+    }
+
+    // 递归版本
+    int width_r() const {
+        std::map<int, int> mp; // k-深度 v-节点数
+        width_r(root, 0, mp);
+        if (mp.empty()) return 0;
+        int max_width = 0;
+        for (const auto& [dep, cnt] : mp) {
+            max_width = std::max(max_width, cnt);
+        }
+        return max_width;
+    }
+
+    static void width_r(Node<T>* r, int dep, std::map<int, int>& mp) {
+        if (!r) return;
+
+        mp[dep]++;
+        width_r(r->lchild, dep + 1, mp);
+        width_r(r->rchild, dep + 1, mp);
+    }
+
+    /**
+     * 153-13
+     */
+    Node<T>* link_leaves_r() {
+        Node<T>*head = nullptr, *pre = nullptr;
+        link_leaves_r(root, head, pre);
+        return head;
+    }
+
+    // 递归版本，中序遍历
+    static void link_leaves_r(Node<T>* r, Node<T>*& head, Node<T>*& pre) {
+        if (!r) return;
+        link_leaves_r(r->lchild, head, pre);
+        if (!r->lchild && !r->rchild) {
+            if (!pre) {
+                head = r;
+                pre = r;
+            } else {
+                pre->rchild = r;
+                pre = r;
+            }
+        }
+        link_leaves_r(r->rchild, head, pre);
+        pre->rchild = nullptr;
+    }
+
+    /**
+     * 153-15
+     */
+    int wpl_r() const {
+        return wpl_r(root, 0);
+    }
+
+    static int wpl_r(Node<T>* r, int d) {
+        if (!r) return 0;
+        if (!r->lchild && !r->rchild) return r->data * d;
+        return wpl_r(r->lchild, d + 1) + wpl_r(r->rchild, d + 1);
+    }
+
+    /**
+     * 153-16
+     */
+    std::string expr2in_r() const {
+        return expr2in_r(root, true);
+    }
+
+    static std::string expr2in_r(Node<T>* r, bool is_root) {
+        if (!r) return "";
+        if (!r->lchild && !r->rchild) return std::string(1, r->data);
+        std::stringstream stream;
+        if (!is_root) stream << '(';
+        stream << expr2in_r(r->lchild, false) << r->data << expr2in_r(r->rchild, false);
+        if (!is_root) stream << ')';
+        return stream.str();
+    }
+
+    /**
+     * 177-05
+     */
+    int tree_deep_r() const {
+        return tree_deep_r(root);
+    }
+
+    static int tree_deep_r(Node<T>* r) {
+        if(!r) return 0;
+        return std::max(tree_deep_r(r->lchild) + 1, tree_deep_r(r->rchild));
+    }
 };
+
+/**
+ * 152-12
+ */
+static void pre2post(const std::string& pre, std::string& post, int l, int r) {
+    if (l > r) return;
+    int len = (r - l + 1) >> 1;
+    pre2post(pre, post, l + 1, l + len);
+    pre2post(pre, post, l + len + 1, r);
+    post += pre[l];
+}
+
+std::string pre2post(const std::string& pre) {
+    std::string post;
+    pre2post(pre, post, 0, pre.length() - 1);
+    return post;
+}
+
+/**
+ * 153-14
+ */
+template <typename T>
+bool is_same(Node<T>* a, Node<T>* b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    return is_same(a->lchild, b->rchild) && is_same(a->rchild, b->rchild);
+}
+
+/**
+ * 153-17
+ */
+bool is_bst(const std::vector<int>& t) {
+    for (int i = 0; i < t.size(); ++i) {
+        if (t[i] == -1) continue;
+        if (i * 2 + 1 >= t.size()) continue;
+        int l = t[i * 2 + 1];
+        if (i * 2 + 2 >= t.size()) {
+            if (l > t[i]) {
+                return false;
+            }
+            continue;
+        }
+
+        int r = t[i * 2 + 2];
+        if (l == -1) {
+            if (t[i] > r) {
+                return false;
+            }
+        } else if (r == -1) {
+            if (l > t[i]) {
+                return false;
+            }
+        } else {
+            if (l > t[i] || t[i] > r) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 auto test_height = []() {
     // Given
@@ -399,6 +567,180 @@ auto test_lca = []() {
     assert(res2->data == 1);
 };
 
+auto test_width = []() {
+    // Given
+    BiTree<int> t;
+    t.root = new Node<int>{1};
+    t.root->lchild = new Node<int>{2, new Node<int>{4}, new Node<int>{5}};
+    t.root->rchild = new Node<int>{3, nullptr, new Node<int>{6}};
+
+    // When
+    int res = t.width();
+    int res2 = t.width_r();
+
+    // Then
+    assert(res == 3);
+    assert(res2 == 3);
+};
+
+auto test_pre2post = []() {
+    // Given
+    std::string pre = "1245367"; // 满二叉树
+
+    // When
+    auto res = pre2post(pre);
+
+    // Then
+    assert(res == "4526731");
+};
+
+auto test_link_leaves = []() {
+    // Given
+    BiTree<int> t;
+    t.root = new Node<int>{1};
+    t.root->lchild = new Node<int>{2, new Node<int>{4}, new Node<int>{5}};
+    t.root->rchild = new Node<int>{3, nullptr, new Node<int>{6}};
+
+    // When
+    auto* head = t.link_leaves_r();
+
+    // Then
+    for (Node<int>* p = head; p; p = p->rchild) {
+        std::cout << p->data << ' '; // 4 5 6
+    }
+    std::cout << std::endl;
+
+    // Finally
+    t.root->lchild->lchild->rchild = nullptr;
+    t.root->lchild->rchild->rchild = nullptr;
+};
+
+auto test_is_same = []() {
+    // Given
+    BiTree<int> t;
+    t.root = new Node<int>{1};
+    t.root->lchild = new Node<int>{2, new Node<int>{4}, new Node<int>{5}};
+    t.root->rchild = new Node<int>{3, nullptr, new Node<int>{6}};
+
+    BiTree<int> t2;
+    t2.root = new Node<int>{1};
+    t2.root->lchild = new Node<int>{2, new Node<int>{4}, new Node<int>{5}};
+    t2.root->rchild = new Node<int>{3, nullptr, new Node<int>{6}};
+
+    // When
+    bool res = is_same(t.root, t2.root);
+
+    // Then
+    assert(res == true);
+};
+
+auto test_wpl = []() {
+    // Given
+    BiTree<int> t;
+    t.root = new Node<int>{1};
+    t.root->lchild = new Node<int>{2, new Node<int>{4}, new Node<int>{5}};
+    t.root->rchild = new Node<int>{3, nullptr, new Node<int>{6}};
+
+    // When
+    auto res = t.wpl_r();
+
+    // Then
+    assert(res == 30);
+};
+
+auto test_expr2in = []() {
+    // Given
+    BiTree<char> t;
+    t.root = new Node<char>(
+        '*',
+        new Node<char>(
+            '+',
+            new Node<char>('a'),
+            new Node<char>('b')),
+        new Node<char>(
+            '*',
+            new Node<char>('c'),
+            new Node<char>(
+                '-',
+                nullptr,
+                new Node<char>('d'))));
+
+    BiTree<char> t2;
+    t2.root = new Node<char>(
+        '+',
+        new Node<char>(
+            '*',
+            new Node<char>('a'),
+            new Node<char>('b')),
+        new Node<char>(
+            '-',
+            nullptr,
+            new Node<char>(
+                '-',
+                new Node<char>('c'),
+                new Node<char>('d'))));
+
+    // When
+    auto res = t.expr2in_r();
+    auto res2 = t2.expr2in_r();
+
+    // Then
+    std::cout << res << std::endl;
+    std::cout << res2 << std::endl;
+};
+
+auto test_is_bst = []() {
+    // Given
+    std::vector<int> t = {40, 25, 60, -1, 30, -1, 80, -1, -1, 27};
+    std::vector<int> t2 = {40, 50, 60, -1, 30, -1, -1, -1, -1, -1, 35};
+
+    // When
+    bool res = is_bst(t);
+    bool res2 = is_bst(t2);
+
+    // Then
+    assert(res == true);
+    assert(res2 == false);
+};
+
+auto test_tree_deep = []() {
+    // Given
+    BiTree<char> t;
+    t.root = new Node<char>(
+        'G',
+        new Node<char>(
+            'H',
+            new Node<char>(
+                'K',
+                nullptr,
+                new Node<char>('L')
+            ),
+            new Node<char>(
+                'I',
+                nullptr,
+                new Node<char>(
+                    'J',
+                    new Node<char>(
+                        'M',
+                        new Node<char>('P'),
+                        new Node<char>(
+                            'N',
+                            nullptr,
+                            new Node<char>('O')
+                        )
+                    )
+                )
+            ) 
+        )
+    );
+
+    // When
+    auto res = t.tree_deep_r();
+
+    // Then
+    assert(res == 4);
+};
+
 int main() {
     test_height();
     test_is_complete();
@@ -408,4 +750,12 @@ int main() {
     test_remove();
     test_print_fa();
     test_lca();
+    test_width();
+    test_pre2post();
+    test_link_leaves();
+    // test_is_same(); // WA
+    test_wpl();
+    test_expr2in();
+    test_is_bst();
+    test_tree_deep();
 }

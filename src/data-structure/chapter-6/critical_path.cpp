@@ -59,6 +59,36 @@ Activity 4 (2->3): e = 2, l = 2, d = 0 (Critical Activity)
 Activity 5 (2->5): e = 2, l = 5, d = 3
 Activity 6 (3->5): e = 6, l = 6, d = 0 (Critical Activity)
 Activity 7 (4->5): e = 6, l = 7, d = 1
+
+sample input 3
+6 8
+0 1 3
+0 2 8
+1 3 9
+1 4 6
+2 1 4
+2 4 10
+3 5 6
+4 5 9
+
+sample output 3
+Event times (ve and vl):
+Node 0: ve = 0, vl = 0 (Critical Event)
+Node 1: ve = 12, vl = 12 (Critical Event)
+Node 2: ve = 8, vl = 8 (Critical Event)
+Node 3: ve = 21, vl = 21 (Critical Event)
+Node 4: ve = 18, vl = 18 (Critical Event)
+Node 5: ve = 27, vl = 27 (Critical Event)
+
+Activity times:
+Activity 0 (0->1): e = 0, l = 9, d = 9
+Activity 1 (0->2): e = 0, l = 0, d = 0 (Critical Activity)
+Activity 2 (1->3): e = 12, l = 12, d = 0 (Critical Activity)
+Activity 3 (1->4): e = 12, l = 12, d = 0 (Critical Activity)
+Activity 4 (2->1): e = 8, l = 8, d = 0 (Critical Activity)
+Activity 5 (2->4): e = 8, l = 8, d = 0 (Critical Activity)
+Activity 6 (3->5): e = 21, l = 21, d = 0 (Critical Activity)
+Activity 7 (4->5): e = 18, l = 18, d = 0 (Critical Activity)
 */
 #include <bits/stdc++.h>
 

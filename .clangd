@@ -2,9 +2,9 @@ CompileFlags:
   Add:
     - "-xc++"
     - "-std=c++23"
-    - "-isystemF:\\application\\develop\\gcc\\x86_64-13.2.0-release-win32-seh-msvcrt-rt_v11-rev0\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\13.2.0\\include\\c++"
-    - "-isystemF:\\application\\develop\\gcc\\x86_64-13.2.0-release-win32-seh-msvcrt-rt_v11-rev0\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\13.2.0\\include\\c++\\x86_64-w64-mingw32"
-    - "-isystemF:\\application\\develop\\gcc\\x86_64-13.2.0-release-win32-seh-msvcrt-rt_v11-rev0\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\13.2.0\\include\\c++\\backward"
+    - "-isystemF:\\Software\\Develop\\mingw\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\15.1.0\\include\\c++"
+    - "-isystemF:\\Software\\Develop\\mingw\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\15.1.0\\include\\c++\\x86_64-w64-mingw32"
+    - "-isystemF:\\Software\\Develop\\mingw\\mingw64\\lib\\gcc\\x86_64-w64-mingw32\\15.1.0\\include\\c++\\backward"
     - "-Wno-ignored-command-line-option"  # 抑制可能的警告
   Compiler: g++
 
@@ -14,6 +14,7 @@ Diagnostics:
   IgnoredHeaders: # 抑制标准库诊断
     - "**/c++/**"
     - "**/mingw64/**"
+  Suppress: attributes_not_allowed
 
 Index:
   Background: Build

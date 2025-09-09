@@ -373,10 +373,8 @@ struct Array {
             } else {
                 ++i;
                 ++j;
-                ++idx;
             }
-            ++idx;
-            if (idx == n) {
+            if (idx++ == n) {
                 return std::max(data[i - 1], other.data[j - 1]);
             }
         }
@@ -483,11 +481,11 @@ struct Array {
 
         while (i < a.length && j < b.length && k < c.length) {
             ans = std::min(ans, calc_d(a.data[i], b.data[j], c.data[k]));
-            if (xis_min(a.data[i], b.data[j], c.data[k])) { // i指向的元素最小
+            if (xis_min(a.data[i], b.data[j], c.data[k])) {  // i指向的元素最小
                 ++i;
-            } else if (xis_min(b.data[j], a.data[i], c.data[k])) { // j指向的元素最小
+            } else if (xis_min(b.data[j], a.data[i], c.data[k])) {  // j指向的元素最小
                 ++j;
-            } else if (xis_min(c.data[k], a.data[i], b.data[j])) { // k指向的元素最小
+            } else if (xis_min(c.data[k], a.data[i], b.data[j])) {  // k指向的元素最小
                 ++k;
             }
         }

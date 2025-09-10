@@ -70,4 +70,5 @@ int main() {
 
     clear(&head);
     assert(empty(head));
+    std::cout << "All tests passed!\n";
 }

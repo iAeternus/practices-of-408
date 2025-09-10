@@ -30,4 +30,5 @@ int main() {
     assert(is_match(s)); // 栈内元素最多的状态：[(
     std::string s2 = "[(])";
     assert(!is_match(s2)); // 栈内元素最多的状态：[(
+    std::cout << "All tests passed!\n";
 }

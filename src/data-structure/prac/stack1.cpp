@@ -37,4 +37,5 @@ int main() {
     assert(top() == n);
     pop();
     assert(top() == n - 1);
+    std::cout << "All tests passed!\n";
 }

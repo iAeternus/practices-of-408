@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <climits>
 
 const int N = 1e3 + 5;
 
@@ -377,7 +378,7 @@ struct BiTree {
     }
 
     static int tree_deep_r(Node<T>* r) {
-        if(!r) return 0;
+        if (!r) return 0;
         return std::max(tree_deep_r(r->lchild) + 1, tree_deep_r(r->rchild));
     }
 };
@@ -440,6 +441,28 @@ bool is_bst(const std::vector<int>& t) {
         }
     }
     return true;
+}
+
+/**
+ * 每个节点的取值必须在指定范围内
+ */
+static bool is_bst_r(const std::vector<int>& t, int idx, int min_val, int max_val) {
+    if (idx >= t.size() || t[idx] == -1) {
+        return true;
+    }
+
+    if (t[idx] <= min_val || t[idx] >= max_val) {
+        return false;
+    }
+
+    return is_bst_r(t, idx * 2 + 1, min_val, t[idx]) && is_bst_r(t, idx * 2 + 2, t[idx], max_val);
+}
+
+/**
+ * 153-17 递归版
+ */
+bool is_bst_r(const std::vector<int>& t) {
+    return is_bst_r(t, 0, INT_MIN, INT_MAX);
 }
 
 auto test_height = []() {
@@ -713,8 +736,7 @@ auto test_tree_deep = []() {
             new Node<char>(
                 'K',
                 nullptr,
-                new Node<char>('L')
-            ),
+                new Node<char>('L')),
             new Node<char>(
                 'I',
                 nullptr,
@@ -726,13 +748,7 @@ auto test_tree_deep = []() {
                         new Node<char>(
                             'N',
                             nullptr,
-                            new Node<char>('O')
-                        )
-                    )
-                )
-            ) 
-        )
-    );
+                            new Node<char>('O')))))));
 
     // When
     auto res = t.tree_deep_r();
